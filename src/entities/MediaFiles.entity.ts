@@ -25,10 +25,9 @@ export class MediaFiles extends BaseEntity {
 	path: string
 	@Column({
 		type: "int",
-		nullable: true,
 	  })
 	 noteId: number
-	@ManyToOne(() => Note, (note) => note.media_files, {
+	@ManyToOne(() => Note, (note) => note.mediaFiles, {
 		onDelete: 'CASCADE',
 		onUpdate: 'CASCADE',
 	})

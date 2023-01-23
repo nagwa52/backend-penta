@@ -1,3 +1,4 @@
+
 import {
 	BaseEntity,
 	Column,
@@ -27,7 +28,7 @@ import {
 import { User } from './User.entity'
 @Entity()
 export class Note extends BaseEntity {
-	@PrimaryGeneratedColumn()
+	@PrimaryGeneratedColumn('uuid')
 	id?: number
 
 	@Column()
@@ -40,13 +41,10 @@ export class Note extends BaseEntity {
 	@IsString()
 	message_body: string                              
 
-	@Column({ default: '' })
-	@IsString()
-	media_files?: string
+    @OneToOne(() => NoteType, (note_type) => note_type.note,{ cascade: true }) // specify inverse side as a second parameter
+    @JoinColumn()
+    note_type: NoteType
 
-	@OneToOne(() => NoteType)
-	@JoinColumn()
-	noteType: NoteType
 
 	@OneToMany(() => MediaFiles, (mediaFiles) => mediaFiles.note)
 	mediaFiles?: MediaFiles[]

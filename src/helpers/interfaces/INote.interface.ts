@@ -1,6 +1,6 @@
 export interface INoteInterface {
 	id?: number
-	description?: string
-	rate?: string
-	cover_picture?: string
+	title?: string
+	message_body?: string
+	noteTypeId?:number
 }

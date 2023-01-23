@@ -8,6 +8,7 @@ import logger from './src/config/logger'
 import configurations from './src/config/configurations'
 // import hotelsRoutes from './src/routes/hotels.routes'
 import userRouter from './src/routes/user.routes'
+import noteRouter from './src/routes/note.routes'
 // import travelerRouter from './src/routes/traveler.routes'
 // import authRouter from './src/routes/auth.routes'
 // import countryRouter from './src/routes/countries.routes';
@@ -53,6 +54,7 @@ AppDataSource.initialize()
 		const config = configurations()
 		createDirectories();
 		app.use('/api/users', userRouter)
+		app.use('/api/notes',noteRouter)
 		app.use('/', appRoutes)
 		server.listen(config.port, () => {
 			console.log(`Server running on PORT: ${config.port}`)

@@ -1,3 +1,4 @@
+
 import {
 	BaseEntity,
 	Column,
@@ -29,10 +30,8 @@ export class NoteType extends BaseEntity {
 	@IsBoolean()
 	disable: boolean
 
-	@OneToOne(() => Note, (note) => note.noteType,{
-		onUpdate: 'CASCADE',
-		onDelete: 'CASCADE' 
-		})
+    @OneToOne(() => Note, (note) => note.note_type) // specify inverse side as a second parameter
+    note: Note
 	// @IsInt()
 	// @Min(1)
 	// @Max(5)
