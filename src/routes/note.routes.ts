@@ -1,18 +1,15 @@
 import { Router } from 'express'
 import {
-	listCompanies,
-	viewCompanyProfile,
-	editCompanyProfile,
-	showCompany
+	listCompanies, editNoteProfile, showNote 
 } from '../controllers/notes/NoteController'
-import { isAuthenticated } from '../middlewares/isAuthenticated'
+import {sendNotes} from '../controllers/notes/send-notes-user'
 
 const router = Router()
 
 router.get('/', listCompanies)
-router.put('/', isAuthenticated, editCompanyProfile)
-router.get('/profile', viewCompanyProfile)
-router.get('/show/:id',showCompany )
+router.put('/', editNoteProfile)
+router.get('/show/:id',showNote )
+router.post('/',sendNotes)
 
 
 export default router

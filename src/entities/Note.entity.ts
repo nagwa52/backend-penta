@@ -24,6 +24,7 @@ import {
 	Max,
 	Min,
 } from 'class-validator'
+import { User } from './User.entity'
 @Entity()
 export class Note extends BaseEntity {
 	@PrimaryGeneratedColumn()
@@ -32,7 +33,7 @@ export class Note extends BaseEntity {
 	@Column()
 	@Length(3)
 	@IsString()
-	name: string
+	title: string
 
 	@Column({ type: 'longtext' })
 	@Length(10)
@@ -49,6 +50,14 @@ export class Note extends BaseEntity {
 
 	@OneToMany(() => MediaFiles, (mediaFiles) => mediaFiles.note)
 	mediaFiles?: MediaFiles[]
+
+    @ManyToMany(() => User, (user) => user.notes)
+    @JoinTable(
+		{
+		name: 'user_notes',
+	}
+	)
+    users: User[]
 
 	@CreateDateColumn()
 	created_at?: Date

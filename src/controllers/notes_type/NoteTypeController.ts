@@ -1,9 +1,8 @@
 import { Request, Response, RequestHandler } from 'express'
-import { Note } from '../../entities/Note.entity'
-import { User } from '../../entities/User.entity'
+import { NoteType} from '../../entities/NoteType.entity'
 import { AppDataSource } from '../../config/database/data-source'
 import { sendNotFoundResponse } from '../../helpers/responses/404.response'
-import { noteValidation } from '../../helpers/validations/note.validation'
+import { NoteTypeValidation } from '../../helpers/validations/note-type.validation'
 import { formatValidationErrors } from '../../helpers/functions/formatValidationErrors'
 // import { getUserIdFromToken } from '../../helpers/functions/getUserIdFromToken'
 import { sendSuccessResponse } from '../../helpers/responses/sendSuccessResponse'
@@ -12,12 +11,12 @@ import { StatusCodes } from '../../helpers/constants/statusCodes'
 
 const listCompanies = async (req: Request, res: Response) => {
 	try{
-	const notes: Note[] = await AppDataSource.manager.find<Note>(
-		Note,
+	const NoteTypes: NoteType[] = await AppDataSource.manager.find<NoteType>(
+		NoteType,
 		{			relations: ["user"],
 	}
 	)
-	sendSuccessResponse<Note[]>(res, notes)
+	sendSuccessResponse<NoteType[]>(res, NoteTypes)
 	}
 	catch (e: any) {
 		sendErrorResponse(
@@ -27,17 +26,17 @@ const listCompanies = async (req: Request, res: Response) => {
 		)
 	}
 }
-const showNote = async (req: Request, res: Response) => {
+const showNoteType = async (req: Request, res: Response) => {
 	const id: number | undefined = +req.params.id
 	try{
-	const note = await AppDataSource.getRepository(Note).findOneOrFail({
+	const noteType = await AppDataSource.getRepository(NoteType).findOneOrFail({
 		where: {
 			id: parseInt(req.params.id),
 		},
 		relations: ['user', 'programs', 'programs.cycles','reviews'],
 	})
 	
-		sendSuccessResponse<Note>(res, note)
+		sendSuccessResponse<NoteType>(res, noteType)
 
 }
 catch (e: any) {
@@ -49,15 +48,15 @@ catch (e: any) {
 }
 }
 
-const editNoteProfile = async (req: Request, res: Response) => {
+const editNoteTypeProfile = async (req: Request, res: Response) => {
 	try {
 		const id=2 ;
-		const validation: Note = await noteValidation.validateAsync(
+		const validation: NoteType = await NoteTypeValidation.validateAsync(
 			req.body,
 			{ abortEarly: false }
 		)
-		const updateResult = await AppDataSource.manager.update<Note>(
-			Note,
+		const updateResult = await AppDataSource.manager.update<NoteType>(
+			NoteType,
 			{
 				id,
 			},
@@ -76,5 +75,4 @@ const editNoteProfile = async (req: Request, res: Response) => {
 		)
 	}
 }
-
-export { listCompanies, editNoteProfile, showNote }
+export { listCompanies, editNoteTypeProfile, showNoteType }

@@ -2,72 +2,28 @@ import { RequestHandler } from 'express'
 import { User } from '../../entities/User.entity'
 import { Request, Response } from 'express'
 import { AppDataSource } from '../../config/database/data-source'
-import { userEditValidation } from '../../helpers/validations/userEdit.validation'
-import { passwordValidation } from '../../helpers/validations/password.validation'
 import { formatValidationErrors } from '../../helpers/functions/formatValidationErrors'
 import { sendErrorResponse } from '../../helpers/responses/sendErrorResponse'
 import { StatusCodes } from '../../helpers/constants/statusCodes'
 import { sendSuccessResponse } from '../../helpers/responses/sendSuccessResponse'
-import { getUserIdFromToken } from '../../helpers/functions/getUserIdFromToken'
-import { unlinkSync } from 'fs'
+import { existsSync, unlinkSync } from 'fs'
 import { UPLOAD_DIRECTORY } from '../../helpers/constants/directories'
 import { sendNotFoundResponse } from '../../helpers/responses/404.response'
-const viewUserProfile: RequestHandler = async (req, res) => {
+import { IUserInterface } from '../../helpers/interfaces/IUser.interface'
+import { userValidation } from '../../helpers/validations/user.validation'
+const createUser = async (req: Request, res: Response) => {
 	try {
-		const id = getUserIdFromToken(req)
-		const user = await AppDataSource.getRepository(User).findOneByOrFail({
-			id,
-		})
-		sendSuccessResponse<User>(res, user)
-	}
-	catch (e: any) {
-		sendErrorResponse(
-			formatValidationErrors(e),
-			res,
-			StatusCodes.BAD_REQUEST
-		)
-	}
-}
-
-const editUserProfile = async (req: Request, res: Response) => {
-	try {
-		const id = getUserIdFromToken(req)
-		const validation: User = await userEditValidation.validateAsync(req.body, {
-			abortEarly: false,
-		})
-		const updateResult = await AppDataSource.manager.update<User>(
-			User,
-			{
-				id,
-			},
-			validation
-		)
-		if (updateResult.affected === 1) {
-			sendSuccessResponse(res)
-		} else {
-			sendErrorResponse(['Failed to update'], res, StatusCodes.NO_CHANGE)
-		}
-	} catch (error: any) {
-		sendErrorResponse(
-			formatValidationErrors(error),
-			res,
-			StatusCodes.NOT_ACCEPTABLE
-		)
-	}
-}
-const updateUserPassword = async (req: Request, res: Response) => {
-	try {
-		const id = getUserIdFromToken(req)
-
-		const password_validation: User = await passwordValidation.validateAsync(
+		const validation: IUserInterface = await userValidation.validateAsync(
 			req.body,
-			{ abortEarly: false }
+			{
+				abortEarly: false,
+			}
 		)
-		await AppDataSource.manager.update<User>(User, id, {
-			password: password_validation.password,
-		})
 
-		sendSuccessResponse(res)
+		const user = await AppDataSource.manager.create<User>(User, validation)
+		await user.save()
+
+		sendSuccessResponse<User>(res, user)
 	} catch (error: any) {
 		sendErrorResponse(
 			formatValidationErrors(error),
@@ -111,23 +67,61 @@ catch (e: any) {
 }
 
 }
-
-const getUserId = async (req: Request, res: Response) => {
+const viewUserProfile: RequestHandler = async (req, res) => {
 	try {
-		const id = getUserIdFromToken(req);
+		const id = 2
 		const user = await AppDataSource.getRepository(User).findOneByOrFail({
-			id
+			id,
 		})
-		sendSuccessResponse<User>(res, user);
-	}
-	catch (error: any) {
-		sendNotFoundResponse(res)
+		sendSuccessResponse<User>(res, user)
+	} catch (e: any) {
+		sendErrorResponse(formatValidationErrors(e), res, StatusCodes.BAD_REQUEST)
 	}
 }
+
+// const editUserProfile = async (req: Request, res: Response) => {
+// 	try {
+// 		const id=2 ;
+// 		const validation: User = await userEditValidation.validateAsync(req.body, {
+// 			abortEarly: false,
+// 		})
+// 		const updateResult = await AppDataSource.manager.update<User>(
+// 			User,
+// 			{
+// 				id,
+// 			},
+// 			validation
+// 		)
+// 		if (updateResult.affected === 1) {
+// 			sendSuccessResponse(res)
+// 		} else {
+// 			sendErrorResponse(['Failed to update'], res, StatusCodes.NO_CHANGE)
+// 		}
+// 	} catch (error: any) {
+// 		sendErrorResponse(
+// 			formatValidationErrors(error),
+// 			res,
+// 			StatusCodes.NOT_ACCEPTABLE
+// 		)
+// 	}
+// }
+
+
+
+// const getUserId = async (req: Request, res: Response) => {
+// 	try {
+// 		const id=2 ;
+// 		const user = await AppDataSource.getRepository(User).findOneByOrFail({
+// 			id
+// 		})
+// 		sendSuccessResponse<User>(res, user);
+// 	}
+// 	catch (error: any) {
+// 		sendNotFoundResponse(res)
+// 	}
+// }
 export {
 	uploadProfilePicture,
 	viewUserProfile,
-	editUserProfile,
-	updateUserPassword,
-	getUserId
+	createUser,
 }

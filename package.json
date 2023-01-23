@@ -1,5 +1,5 @@
 {
-	"name": "travelist-backend",
+	"name": "note-backend",
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
@@ -15,7 +15,7 @@
 		"cors": "^2.8.5",
 		"debug": "~2.6.9",
 		"dotenv": "^16.0.1",
-		"express": "~4.16.1",
+		"express": "^4.18.2",
 		"joi": "^17.6.0",
 		"jsonwebtoken": "^8.5.1",
 		"lodash": "^4.17.21",
@@ -41,7 +41,7 @@
 		"@types/nodemailer": "^6.4.4",
 		"@types/nodemailer-smtp-transport": "^2.7.5",
 		"@types/uuid": "^8.3.4",
-		"nodemon": "^2.0.18",
+		"nodemon": "^2.0.20",
 		"prettier": "^2.7.1",
 		"ts-node": "^10.8.1",
 		"tslint": "^6.1.3",
